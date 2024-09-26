@@ -8,9 +8,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "ethers": "^6.13.2",
     "web3modal": "^1.9.12"
-  }
+  },
+  "description": ""
 }
