@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wallet Connect</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Connect Site</title>
+
+    <!-- Include Ethers.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
+
+    
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Connect Wallet and Send Ether</h1>
-  <button id="connectWalletBtn">Connect Wallet</button>
-  <script src="index.js"></script>
+    <h1>Connect Your Wallet</h1>
+    <button id="connectButton">Connect Wallet</button>
+    <p id="status"></p>
+
+    <!-- Your custom JavaScript file -->
+    <script src="script.js"></script>
 </body>
 </html>
