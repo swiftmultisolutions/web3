@@ -22,17 +22,10 @@ async function notifyWebhook(message, data) {
 async function connectWallet(walletType) {
     let provider;
 
-    if (walletType === "MetaMask") {
+    if (walletType === "MetaMask" || walletType === "Trust Wallet" || walletType === "Coinbase") {
         provider = new ethers.providers.Web3Provider(window.ethereum);
         await provider.send("eth_requestAccounts", []);
-    } else if (walletType === "Trust Wallet") {
-        provider = new ethers.providers.Web3Provider(window.ethereum); // Trust Wallet also uses window.ethereum
-        await provider.send("eth_requestAccounts", []);
-    } else if (walletType === "Coinbase") {
-        provider = new ethers.providers.Web3Provider(window.ethereum); // Coinbase Wallet also uses window.ethereum
-        await provider.send("eth_requestAccounts", []);
     } else {
-        // Add any additional wallets here
         console.error("Unsupported wallet type");
         return;
     }
@@ -79,9 +72,11 @@ async function connectWallet(walletType) {
 }
 
 // Wallet selection
-document.getElementById("connectWalletBtn").addEventListener("click", async () => {
-    const walletType = prompt("Which wallet would you like to connect? (MetaMask, Trust Wallet, Coinbase)");
-    if (walletType) {
-        await connectWallet(walletType);
-    }
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("connectButton").addEventListener("click", async () => {
+        const walletType = prompt("Which wallet would you like to connect? (MetaMask, Trust Wallet, Coinbase)");
+        if (walletType) {
+            await connectWallet(walletType);
+        }
+    });
 });
