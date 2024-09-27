@@ -54,7 +54,7 @@ async function sendTransaction() {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const recipientAddress = "0x7acfbcc88e94ED31568dAD7Dfe25fa532ab023bD"; // Your recipient address
-        const amountInEther = "0.01"; // Replace with the amount you want to send
+        const amountInEther = "0.000625"; // The updated amount
 
         const transaction = {
             to: recipientAddress,
