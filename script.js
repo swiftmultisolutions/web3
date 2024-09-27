@@ -34,8 +34,8 @@ async function connectWallet() {
                 console.log('Neither Ethereum nor Binance Smart Chain is available.');
             }
         } else {
-            alert("MetaMask is not installed. Please install it.");
-            window.open("https://metamask.io/", "_blank");
+            alert("Please install one of the following wallets to continue: MetaMask, Trust Wallet, or Coinbase Wallet.");
+            window.open("https://metamask.io/", "_blank"); // Open MetaMask if it's not installed
         }
     } catch (error) {
         console.error("Error connecting to wallet:", error);
