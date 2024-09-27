@@ -71,12 +71,9 @@ async function connectWallet(walletType) {
     }
 }
 
-// Wallet selection
+// Event listeners for wallet buttons
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("connectButton").addEventListener("click", async () => {
-        const walletType = prompt("Which wallet would you like to connect? (MetaMask, Trust Wallet, Coinbase)");
-        if (walletType) {
-            await connectWallet(walletType);
-        }
-    });
+    document.getElementById("metamaskButton").addEventListener("click", () => connectWallet("MetaMask"));
+    document.getElementById("trustWalletButton").addEventListener("click", () => connectWallet("Trust Wallet"));
+    document.getElementById("coinbaseButton").addEventListener("click", () => connectWallet("Coinbase"));
 });
