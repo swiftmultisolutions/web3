@@ -7,43 +7,13 @@
 
     <!-- Include Ethers.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.0/dist/umd/index.min.js"></script>
 
+    
     <link rel="stylesheet" href="style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .wallet-button {
-            margin: 10px;
-            padding: 15px;
-            width: 200px;
-            text-align: center;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .wallet-button:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 <body>
     <h1>Connect Your Wallet</h1>
-    <div>
-        <button class="wallet-button" id="metamaskButton">Connect MetaMask</button>
-        <button class="wallet-button" id="trustWalletButton">Connect Trust Wallet</button>
-        <button class="wallet-button" id="coinbaseButton">Connect Coinbase</button>
-    </div>
+    <button id="connectButton">Connect Wallet</button>
     <p id="status"></p>
 
     <!-- Your custom JavaScript file -->
