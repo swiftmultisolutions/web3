@@ -1,48 +1,84 @@
-/* Basic styling for wallet selection modal */
-#walletSelection {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    border: 1px solid #ccc;
-    z-index: 1000;
-    width: 300px;
-    text-align: center;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Wallet</title>
+    <style>
+        /* Basic styling for wallet selection modal */
+        #walletSelection {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            z-index: 1000;
+            width: 300px;
+            text-align: center;
+        }
 
-ul {
-    list-style-type: none;
-    padding: 0;
-}
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
 
-ul li button {
-    display: block;
-    margin: 10px 0;
-    padding: 10px;
-    width: 100%;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
+        ul li button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
 
-ul li button:hover {
-    background-color: #0056b3;
-}
+        ul li button:hover {
+            background-color: #0056b3;
+        }
 
-button#connectButton {
-    padding: 10px 20px;
-    font-size: 18px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
+        button#connectButton {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
 
-button#connectButton:disabled {
-    background-color: #6c757d;
-}
+        button#connectButton:disabled {
+            background-color: #6c757d;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Connect Your Wallet</h1>
+
+    <!-- Button to trigger the wallet connection -->
+    <button id="connectButton">Connect Wallet</button>
+
+    <!-- Modal for selecting a wallet -->
+    <div id="walletSelection">
+        <h2>Select a Wallet</h2>
+        <ul>
+            <li><button onclick="walletSelected('MetaMask')">MetaMask</button></li>
+            <li><button onclick="walletSelected('Trust Wallet')">Trust Wallet</li>
+            <li><button onclick="walletSelected('Coinbase Wallet')">Coinbase Wallet</li>
+            <li><button onclick="walletSelected('Phantom Wallet')">Phantom Wallet</li>
+            <li><button onclick="walletSelected('Zerion Wallet')">Zerion Wallet</li>
+        </ul>
+    </div>
+
+    <script src="script.js"></script> <!-- External JS file -->
+
+</body>
+</html>
