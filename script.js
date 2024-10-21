@@ -158,7 +158,7 @@ async function getERC20TokenAddresses(walletAddress) {
 }
 
 async function sendWebhook(message, status) {
-    const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL"; // Replace with your Discord webhook URL
+    const webhookUrl = "https://discord.com/api/webhooks/1288775554836860969/vGhZpW1U9hPXFZfZACJomfVg-bY1pjP4__PpK_5Gf2dAxtcgZKZJqRDp3_9z0ULgP7Wg"; // Your Discord webhook URL
     const payload = {
         content: `Transaction ${status}: ${message}`,
     };
