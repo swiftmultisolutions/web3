@@ -1,27 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wallet Connect Site</title>
+/* Basic styling for wallet selection modal */
+#walletSelection {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    width: 300px;
+    text-align: center;
+}
 
-    <!-- Include Ethers.js and Web3Modal from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3modal/1.9.5/web3modal.min.js"></script>
+ul {
+    list-style-type: none;
+    padding: 0;
+}
 
-    <!-- Add a basic style for button -->
-    <style>
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Connect Your Wallet</h1>
-    <button id="connectButton">Connect Wallet</button>
-    <p id="status"></p>
+ul li button {
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
 
-    <script src="script.js"></script>
-</body>
-</html>
+ul li button:hover {
+    background-color: #0056b3;
+}
+
+button#connectButton {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button#connectButton:disabled {
+    background-color: #6c757d;
+}
