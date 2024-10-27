@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.0/dist/umd/index.min.js"></script>
 
     <!-- Link to your CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> <!-- Ensure this path is correct -->
 
     <style>
         /* Basic styles for the modal */
@@ -79,28 +79,31 @@
     <script src="script.js"></script>
 
     <script>
-        const walletModal = document.getElementById("walletModal");
-        const closeModal = document.getElementById("closeModal");
+        document.addEventListener('DOMContentLoaded', () => {
+            const walletModal = document.getElementById("walletModal");
+            const closeModal = document.getElementById("closeModal");
 
-        document.getElementById("connectButton").addEventListener("click", () => {
-            walletModal.classList.add("show"); // Show the modal
-        });
+            document.getElementById("connectButton").addEventListener("click", () => {
+                console.log("Connect Wallet clicked");
+                walletModal.classList.add("show"); // Show the modal
+            });
 
-        closeModal.addEventListener("click", () => {
-            walletModal.classList.remove("show"); // Hide the modal
-        });
+            closeModal.addEventListener("click", () => {
+                walletModal.classList.remove("show"); // Hide the modal
+            });
 
-        // Handle wallet button clicks
-        document.getElementById("metamaskButton").addEventListener("click", async () => {
-            walletModal.classList.remove("show"); // Hide the modal
-            // Here you can call your connectWallet function
-            await connectWallet(); // Call the connectWallet function from your script
-        });
+            // Handle wallet button clicks
+            document.getElementById("metamaskButton").addEventListener("click", async () => {
+                walletModal.classList.remove("show"); // Hide the modal
+                console.log("MetaMask clicked");
+                await connectWallet(); // Call the connectWallet function from your script
+            });
 
-        document.getElementById("trustWalletButton").addEventListener("click", async () => {
-            walletModal.classList.remove("show"); // Hide the modal
-            // Add your Trust Wallet connect logic here
-            // await connectWalletForTrustWallet(); // You need to define this function in your script
+            document.getElementById("trustWalletButton").addEventListener("click", async () => {
+                walletModal.classList.remove("show"); // Hide the modal
+                console.log("Trust Wallet clicked");
+                // Add your Trust Wallet connect logic here
+            });
         });
     </script>
 </body>
