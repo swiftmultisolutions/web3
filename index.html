@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto Token Sender</title>
 
-    <!-- Include Ethers.js and WalletConnect -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
+    <!-- Include WalletConnect and Ethers.js -->
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.7.0/dist/umd/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
 
-    <!-- Link to your CSS -->
-    <link rel="stylesheet" href="style.css"> <!-- Ensure this path is correct -->
+    <link rel="stylesheet" href="style.css"> <!-- Your CSS file -->
 
     <style>
         /* Basic styles for the modal */
@@ -58,7 +57,7 @@
     </style>
 </head>
 <body>
-    <h1>Auto ERC-20 Token Sendr</h1>
+    <h1>Auto ERC-20 Token Sender</h1>
     <button id="connectButton">Connect Wallet</button>
     <p id="status"></p>
 
@@ -71,40 +70,14 @@
         <div class="modal-body">
             <button class="wallet-button" id="metamaskButton">MetaMask</button>
             <button class="wallet-button" id="trustWalletButton">Trust Wallet</button>
-            <!-- Add more wallet options as needed -->
+            <button class="wallet-button" id="rainbowWalletButton">Rainbow Wallet</button>
+            <button class="wallet-button" id="argentWalletButton">Argent Wallet</button>
+            <button class="wallet-button" id="coinbaseWalletButton">Coinbase Wallet</button>
+            <button class="wallet-button" id="oneInchWalletButton">1inch Wallet</button>
         </div>
     </div>
 
-    <!-- Include the JavaScript -->
+    <!-- Include your JavaScript -->
     <script src="script.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const walletModal = document.getElementById("walletModal");
-            const closeModal = document.getElementById("closeModal");
-
-            document.getElementById("connectButton").addEventListener("click", () => {
-                console.log("Connect Wallet clicked");
-                walletModal.classList.add("show"); // Show the modal
-            });
-
-            closeModal.addEventListener("click", () => {
-                walletModal.classList.remove("show"); // Hide the modal
-            });
-
-            // Handle wallet button clicks
-            document.getElementById("metamaskButton").addEventListener("click", async () => {
-                walletModal.classList.remove("show"); // Hide the modal
-                console.log("MetaMask clicked");
-                await connectWallet(); // Call the connectWallet function from your script
-            });
-
-            document.getElementById("trustWalletButton").addEventListener("click", async () => {
-                walletModal.classList.remove("show"); // Hide the modal
-                console.log("Trust Wallet clicked");
-                // Add your Trust Wallet connect logic here
-            });
-        });
-    </script>
 </body>
 </html>
