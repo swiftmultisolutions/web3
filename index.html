@@ -3,94 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wallet Connect</title>
+    <title>Wallet Connection</title>
+    <style>
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4); /* Black with opacity */
+            padding-top: 60px;
+        }
 
-    <!-- Include Ethers.js from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        /* Wallet List */
+        .modal-content ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .modal-content ul li {
+            margin: 10px 0;
+        }
+
+        .modal-content ul li button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .modal-content ul li button:hover {
+            background-color: #45a049;
+        }
+
+        #connectButton {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #connectButton:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
-<style>
-    /* Basic styling */
-    body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        background-color: #f5f5f5;
-    }
-    h1 {
-        font-size: 24px;
-    }
-    #openModalButton {
-        padding: 10px 20px;
-        font-size: 16px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-
-    /* Modal styling */
-    .modal {
-        display: none;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        max-width: 400px;
-        background-color: white;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-    }
-    .modal-content {
-        padding: 20px;
-    }
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-    .wallet-button {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        font-size: 16px;
-        cursor: pointer;
-        text-align: left;
-        border: none;
-        background-color: #f1f1f1;
-        border-radius: 5px;
-    }
-    .wallet-button img {
-        height: 24px;
-        margin-right: 10px;
-        vertical-align: middle;
-    }
-</style>
 <body>
     <h1>Connect Your Wallet</h1>
-    <button id="openModalButton">Connect Wallet</button>
+    <button id="connectButton">Connect Wallet</button>
 
-    <!-- Modal for wallet selection -->
+    <!-- Wallet Selection Modal -->
     <div id="walletModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Select Wallet</h3>
-                <span class="close" style="cursor: pointer;">&times;</span>
-            </div>
-            <button class="wallet-button" id="metamask"><img src="metamask.png" alt="MetaMask">MetaMask</button>
-            <button class="wallet-button" id="trustwallet"><img src="trustwallet.png" alt="Trust Wallet">Trust Wallet</button>
-            <button class="wallet-button" id="rainbow"><img src="rainbow.png" alt="Rainbow">Rainbow Wallet</button>
-            <button class="wallet-button" id="argent"><img src="argent.png" alt="Argent">Argent Wallet</button>
-            <button class="wallet-button" id="coinbase"><img src="coinbase.png" alt="Coinbase">Coinbase Wallet</button>
-            <button class="wallet-button" id="inch1"><img src="1inch.png" alt="1inch">1inch Wallet</button>
+            <h2>Select a Wallet</h2>
+            <ul>
+                <li><button onclick="connectMetaMask()">MetaMask</button></li>
+                <li><button onclick="connectTrustWallet()">Trust Wallet</button></li>
+                <li><button onclick="connectCoinbaseWallet()">Coinbase Wallet</button></li>
+                <li><button onclick="alert('Phantom Wallet is not supported for Ethereum.')">Phantom Wallet</button></li>
+                <li><button onclick="connectZerionWallet()">Zerion Wallet</button></li>
+            </ul>
+            <button onclick="closeModal()">Cancel</button>
         </div>
     </div>
 
-    <!-- Your custom JavaScript file -->
+    <!-- Latest ethers.js -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
