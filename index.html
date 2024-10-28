@@ -7,67 +7,22 @@
 
     <!-- Include Ethers.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
+    
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Basic styles for the modal */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; /* 15% from the top and centered */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .wallet-option {
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #ddd;
-            cursor: pointer;
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
     <h1>Connect Your Wallet</h1>
-    <button id="connectButton">Connect Wallet</button>
-    <p id="status"></p>
+    
+    <!-- Wallet buttons -->
+    <button class="walletButton" data-wallet-type="metamask">Connect MetaMask</button>
+    <button class="walletButton" data-wallet-type="walletconnect">Connect WalletConnect</button>
+    <button class="walletButton" data-wallet-type="trustwallet">Connect Trust Wallet</button>
+    <button class="walletButton" data-wallet-type="rainbow">Connect Rainbow Wallet</button>
+    <button class="walletButton" data-wallet-type="argent">Connect Argent Wallet</button>
+    <button class="walletButton" data-wallet-type="coinbase">Connect Coinbase Wallet</button>
+    <button class="walletButton" data-wallet-type="inch">Connect 1inch Wallet</button>
 
-    <!-- The Modal -->
-    <div id="walletModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Select a Wallet</h2>
-            <div class="wallet-option" id="metamaskOption">MetaMask</div>
-            <div class="wallet-option" id="trustWalletOption">Trust Wallet</div>
-            <div class="wallet-option" id="rainbowOption">Rainbow Wallet</div>
-            <div class="wallet-option" id="argentOption">Argent Wallet</div>
-            <div class="wallet-option" id="coinbaseOption">Coinbase Wallet</div>
-            <div class="wallet-option" id="oneInchOption">1inch Wallet</div>
-        </div>
-    </div>
+    <p id="status"></p>
 
     <!-- Your custom JavaScript file -->
     <script src="script.js"></script>
