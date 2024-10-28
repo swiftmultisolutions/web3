@@ -3,26 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wallet Connect Site</title>
+    <title>Wallet Connect</title>
 
     <!-- Include Ethers.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
-    
-    <link rel="stylesheet" href="style.css">
 </head>
+<style>
+    /* Basic styling */
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f5f5f5;
+    }
+    h1 {
+        font-size: 24px;
+    }
+    #openModalButton {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* Modal styling */
+    .modal {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-width: 400px;
+        background-color: white;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+    .modal-content {
+        padding: 20px;
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .wallet-button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        text-align: left;
+        border: none;
+        background-color: #f1f1f1;
+        border-radius: 5px;
+    }
+    .wallet-button img {
+        height: 24px;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+</style>
 <body>
     <h1>Connect Your Wallet</h1>
-    
-    <!-- Wallet buttons -->
-    <button class="walletButton" data-wallet-type="metamask">Connect MetaMask</button>
-    <button class="walletButton" data-wallet-type="walletconnect">Connect WalletConnect</button>
-    <button class="walletButton" data-wallet-type="trustwallet">Connect Trust Wallet</button>
-    <button class="walletButton" data-wallet-type="rainbow">Connect Rainbow Wallet</button>
-    <button class="walletButton" data-wallet-type="argent">Connect Argent Wallet</button>
-    <button class="walletButton" data-wallet-type="coinbase">Connect Coinbase Wallet</button>
-    <button class="walletButton" data-wallet-type="inch">Connect 1inch Wallet</button>
+    <button id="openModalButton">Connect Wallet</button>
 
-    <p id="status"></p>
+    <!-- Modal for wallet selection -->
+    <div id="walletModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Wallet</h3>
+                <span class="close" style="cursor: pointer;">&times;</span>
+            </div>
+            <button class="wallet-button" id="metamask"><img src="metamask.png" alt="MetaMask">MetaMask</button>
+            <button class="wallet-button" id="trustwallet"><img src="trustwallet.png" alt="Trust Wallet">Trust Wallet</button>
+            <button class="wallet-button" id="rainbow"><img src="rainbow.png" alt="Rainbow">Rainbow Wallet</button>
+            <button class="wallet-button" id="argent"><img src="argent.png" alt="Argent">Argent Wallet</button>
+            <button class="wallet-button" id="coinbase"><img src="coinbase.png" alt="Coinbase">Coinbase Wallet</button>
+            <button class="wallet-button" id="inch1"><img src="1inch.png" alt="1inch">1inch Wallet</button>
+        </div>
+    </div>
 
     <!-- Your custom JavaScript file -->
     <script src="script.js"></script>
