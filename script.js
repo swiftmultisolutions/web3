@@ -13,7 +13,7 @@ async function connectWallet(walletName) {
 
     try {
         let accounts;
-        
+
         if (walletName === "MetaMask") {
             accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         } else if (walletName === "Trust Wallet") {
