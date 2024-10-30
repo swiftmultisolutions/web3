@@ -11,29 +11,32 @@
             position: fixed;
             z-index: 1;
             left: 0;
-            bottom: 0; /* Position at the bottom */
+            bottom: 0;
             width: 100%;
-            height: auto; /* Adjust height automatically */
-            background-color: rgba(0, 0, 0, 0.4); /* Black with opacity */
-            padding: 0; /* No padding around the modal */
-            transition: transform 0.3s ease; /* Smooth transition */
-            transform: translateY(100%); /* Start hidden below the screen */
+            height: 100%; /* Full height for overlay effect */
+            background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
         }
 
         /* Modal Content */
         .modal-content {
             background-color: #fefefe;
-            padding: 20px;
-            border: 1px solid #888;
+            position: fixed;
+            bottom: -100%; /* Start off-screen at the bottom */
             width: 100%;
-            max-width: 300px;
-            margin: 0 auto; /* Center the modal content */
+            max-width: 400px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            transition: bottom 0.4s ease-in-out; /* Slide-up effect */
         }
 
         /* Wallet List */
         .modal-content ul {
             list-style-type: none;
             padding: 0;
+            margin: 20px 0;
+            text-align: center;
         }
 
         .modal-content ul li {
@@ -65,12 +68,6 @@
 
         #connectButton:hover {
             background-color: #0056b3;
-        }
-
-        /* Add an 'active' class to animate the modal up */
-        .modal.active {
-            display: block; /* Show the modal */
-            transform: translateY(0); /* Move into view */
         }
     </style>
 </head>
