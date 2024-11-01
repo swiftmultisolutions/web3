@@ -3,95 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wallet Connection</title>
+    <title>Wallet Connect Modal</title>
     <style>
-        /* The Modal (background) */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            height: 100%; /* Full height for overlay effect */
-            background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
-        }
-
-        /* Modal Content */
-        .modal-content {
-            background-color: #fefefe;
-            position: fixed;
-            bottom: -100%; /* Start off-screen at the bottom */
-            width: 100%;
-            max-width: 400px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 20px;
-            border-radius: 15px 15px 0 0;
-            transition: bottom 0.4s ease-in-out; /* Slide-up effect */
-        }
-
-        /* Wallet List */
-        .modal-content ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .modal-content ul li {
-            margin: 10px 0;
-        }
-
-        .modal-content ul li button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .modal-content ul li button:hover {
-            background-color: #45a049;
-        }
-
+        /* Button to open modal */
         #connectButton {
+            display: block;
+            margin: 20px auto;
             padding: 10px 20px;
-            background-color: #007BFF;
+            font-size: 16px;
+            background-color: #007bff;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
         }
 
-        #connectButton:hover {
-            background-color: #0056b3;
+        /* Modal overlay */
+        #walletModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        /* Modal content */
+        .modal-content {
+            position: absolute;
+            bottom: -100%;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 10px 10px 0 0;
+            padding: 20px;
+            transition: bottom 0.4s ease;
+        }
+
+        /* Wallet options */
+        .wallet-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .wallet-option:hover {
+            background: #f0f0f0;
+        }
+
+        .wallet-option img {
+            width: 30px;
+            height: 30px;
+            margin-right: 15px;
+        }
+
+        .wallet-option span {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Close button */
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <h1>Connect Your Walle</h1>
-    <button id="connectButton">Connect Walle</button>
 
-    <!-- Wallet Selection Modal -->
-    <div id="walletModal" class="modal">
+    <!-- Connect Wallet Button -->
+    <button id="connectButton">Connect Wallet</button>
+
+    <!-- Wallet Modal -->
+    <div id="walletModal">
         <div class="modal-content">
-            <h2>Select a Wallet</h2>
-            <ul>
-                <li><button onclick="connectMetaMask()">MetaMask</button></li>
-                <li><button onclick="connectTrustWallet()">Trust Wallet</button></li>
-                <li><button onclick="connectCoinbaseWallet()">Coinbase Wallet</button></li>
-                <li><button onclick="alert('Phantom Wallet is not supported for Ethereum.')">Phantom Wallet</button></li>
-                <li><button onclick="connectZerionWallet()">Zerion Wallet</button></li>
-            </ul>
-            <button onclick="closeModal()">Cancel</button>
+            <span class="close-button" onclick="closeModal()">×</span>
+            <h3>Connect Wallet</h3>
+            
+            <!-- Wallet Options -->
+            <div class="wallet-option" onclick="connectMetaMask()">
+                <img src="https://example.com/metamask-icon.png" alt="MetaMask">
+                <span>MetaMask</span>
+            </div>
+            <div class="wallet-option" onclick="connectTrustWallet()">
+                <img src="https://example.com/trustwallet-icon.png" alt="Trust Wallet">
+                <span>Trust Wallet</span>
+            </div>
+            <div class="wallet-option" onclick="connectCoinbaseWallet()">
+                <img src="https://example.com/coinbase-icon.png" alt="Coinbase Wallet">
+                <span>Coinbase Wallet</span>
+            </div>
+            <div class="wallet-option" onclick="connectZerionWallet()">
+                <img src="https://example.com/zerion-icon.png" alt="Zerion Wallet">
+                <span>Zerion Wallet</span>
+            </div>
         </div>
     </div>
 
-    <!-- Latest ethers.js -->
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <!-- Script File -->
     <script src="script.js"></script>
 </body>
 </html>
